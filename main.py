@@ -37,10 +37,10 @@ class Email:
 
 
 class Database:
-    def __int__(self):
-        self.connection = sqlite3.connect('data.db')
+    def __int__(self, database_path):
+        self.connection = sqlite3.connect(database_path)
 
-    def store(self, extrated):
+    def store(self, extracted):
         row = extracted.split(",")
         row = [item.strip() for item in row]
         cursor = self.connection.cursor()
@@ -65,7 +65,7 @@ if __name__ == "__main__":
 
 
         if extracted != 'No upcoming tour':
-            database = Database()
+            database = Database(database_path="data.db")
             row = database.read(extracted)
             if not row:
                 database.store(extracted)
