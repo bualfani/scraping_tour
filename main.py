@@ -8,7 +8,6 @@ import sqlite3
 
 url = "https://programmer100.pythonanywhere.com/tours/"
 
-connection = sqlite3.connect('data.db')
 
 
 class Event:
@@ -38,18 +37,21 @@ class Email:
 
 
 class Database:
+    def __int__(self):
+        self.connection = sqlite3.connect('data.db')
+
     def store(self, extrated):
         row = extracted.split(",")
         row = [item.strip() for item in row]
-        cursor = connection.cursor()
+        cursor = self.connection.cursor()
         cursor.execute("INSERT INTO events VALUES(?,?,?)", row)
-        connection.commit()
+        self.connection.commit()
 
     def read(self, extracted):
         row = extracted.split(",")
         row = [item.strip() for item in row]
         Band, City, Date = row
-        cursor = connection.cursor()
+        cursor = self.connection.cursor()
         cursor.execute("SELECT * FROM events WHERE Band=? City=? Date=?", (Band, City, Date))
         rows = cursor.fetchall()
         return rows
@@ -63,9 +65,10 @@ if __name__ == "__main__":
 
 
         if extracted != 'No upcoming tour':
-            row = read(extracted)
+            database = Database()
+            row = database.read(extracted)
             if not row:
-                store(extracted)
+                database.store(extracted)
                 email= Email()
                 email.send(message="New Event was found")
         # check for new event every two sec.
